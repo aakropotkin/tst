@@ -36,24 +36,24 @@ type Price = BigDecimal;
 case class Rate( rateCode: RateCode, rateGroup: RateGroup );
 
 /** @brief The price of a cabin at a given rate. */
-case class CabinPrice( cabinCode: CabinCode,
-                       rateCode:  RateCode,
-                       price:     Price
+case class CabinPrice( cabinCode: CabinCode
+                     , rateCode:  RateCode
+                     , price:     Price
                      );
 
 /** @brief The lowest available price for a cabin in a _rate group_. */
-case class BestGroupPrice( cabinCode: CabinCode,
-                           rateCode:  RateCode,
-                           price:     Price,
-                           rateGroup: RateGroup
+case class BestGroupPrice( cabinCode: CabinCode
+                         , rateCode:  RateCode
+                         , price:     Price
+                         , rateGroup: RateGroup
                          );
 
 
 /* -------------------------------------------------------------------------- */
 
 /** @brief Find the best prices for a rate group in a set of cabin prices. */
-def getBestGroupPrices( rates:  Seq[Rate],
-                        prices: Seq[CabinPrice]
+def getBestGroupPrices( rates:  Seq[Rate]
+                      , prices: Seq[CabinPrice]
                       ): Seq[BestGroupPrice] =
 {
   /* Convert list of `Rate's to a lookup table. */
@@ -74,10 +74,10 @@ def getBestGroupPrices( rates:  Seq[Rate],
   /* Covert `CabinPrice's to `BestCabinPrice's by looking up the human
    * readable name for its `RateCode'. */
   return bests.values.map( cabinPrice =>
-    BestGroupPrice( cabinPrice.cabinCode,
-                    cabinPrice.rateCode,
-                    cabinPrice.price,
-                    rateCodesToGroups( cabinPrice.rateCode )
+    BestGroupPrice( cabinPrice.cabinCode
+                  , cabinPrice.rateCode
+                  , cabinPrice.price
+                  , rateCodesToGroups( cabinPrice.rateCode )
                   )
   ).toSeq;
 }
@@ -88,19 +88,19 @@ def getBestGroupPrices( rates:  Seq[Rate],
 /** @brief Program entry. */
 @main def problem1(): Unit =
 {
-  var rates = Seq( Rate( "M1", "Military" ),
-                   Rate( "M2", "Military" ),
-                   Rate( "S1", "Senior" ),
-                   Rate( "S2", "Senior" )
+  var rates = Seq( Rate( "M1", "Military" )
+                 , Rate( "M2", "Military" )
+                 , Rate( "S1", "Senior" )
+                 , Rate( "S2", "Senior" )
                  );
-  var prices = Seq( CabinPrice( "CA", "M1", 200.00 ),
-                    CabinPrice( "CA", "M2", 250.00 ),
-                    CabinPrice( "CA", "S1", 225.00 ),
-                    CabinPrice( "CA", "S2", 260.00 ),
-                    CabinPrice( "CB", "M1", 230.00 ),
-                    CabinPrice( "CB", "M2", 260.00 ),
-                    CabinPrice( "CB", "S1", 245.00 ),
-                    CabinPrice( "CB", "S2", 270.00 )
+  var prices = Seq( CabinPrice( "CA", "M1", 200.00 )
+                  , CabinPrice( "CA", "M2", 250.00 )
+                  , CabinPrice( "CA", "S1", 225.00 )
+                  , CabinPrice( "CA", "S2", 260.00 )
+                  , CabinPrice( "CB", "M1", 230.00 )
+                  , CabinPrice( "CB", "M2", 260.00 )
+                  , CabinPrice( "CB", "S1", 245.00 )
+                  , CabinPrice( "CB", "S2", 270.00 )
                   );
 
   getBestGroupPrices( rates, prices ).foreach( println );
