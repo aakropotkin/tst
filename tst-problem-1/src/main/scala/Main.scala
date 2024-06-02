@@ -1,65 +1,116 @@
+/**
+ * @file Main.scala
+ *
+ * @brief Find the best prices for a rate group in a set of cabin prices.
+ */
+
+/* ========================================================================== */
+
 /* Types */
 
-case class Rate( rateCode: String, rateGroup: String )
+/**
+ * @brief A short code referring to a _Rate Group_.
+ * Example codes are "M1", "M2", "S1", or "S2".
+ */
+type RateCode = String
 
-case class CabinPrice( cabinCode: String, rateCode: String, price: BigDecimal )
+/**
+ * @brief A human readable name for a _Rate Group_.
+ * Example group names are "Senior" or "Military".
+ */
+type RateGroup = String
 
-case class BestGroupPrice( cabinCode: String,
-                           rateCode:  String,
-                           price:     BigDecimal,
-                           rateGroup: String
+/**
+ * @brief A short code used to uniquely identify cabins.
+ * Example codes are "CA" or "CB".
+ */
+type CabinCode = String
+
+/**
+ * @brief Indicates the cost of a cabin.
+ * The Currency is unspecified or irrelevant.
+ */
+type Price = BigDecimal
+
+/** @brief A mapping from a _rate_'s _code name_ to its human readable name. */
+case class Rate( rateCode: RateCode, rateGroup: RateGroup )
+
+/** @brief The price of a cabin at a given rate. */
+case class CabinPrice( cabinCode: CabinCode,
+                       rateCode:  RateCode,
+                       price:     Price
+                     )
+
+/** @brief The lowest available price for a cabin in a _rate group_. */
+case class BestGroupPrice( cabinCode: CabinCode,
+                           rateCode:  RateCode,
+                           price:     Price,
+                           rateGroup: RateGroup
                          )
 
 
-/* Helpers */
+/* -------------------------------------------------------------------------- */
 
-object RateUtils:
-  def getBestGroupPrices( rates:  Seq[Rate],
-                          prices: Seq[CabinPrice]
-                        ): Seq[BestGroupPrice] =
+/** @brief Find the best prices for a rate group in a set of cabin prices. */
+def getBestGroupPrices( rates:  Seq[Rate],
+                        prices: Seq[CabinPrice]
+                      ): Seq[BestGroupPrice] =
+{
+  /* Convert list of `Rate's to a lookup table. */
+  val rateCodesToGroups: Map[RateCode, RateGroup] =
+    rates.groupMapReduce( rate => rate.rateCode )( rate => rate.rateGroup )(
+      /* Ensure each `RateCode' is defined exactly once. */
+      ( acc, x ) => assert( false )
+    )
 
-    /* Maps Rate Codes to Rate Groups */
-    val rateGroups: Map[String, String] =
-      rates.groupMapReduce( rate => rate.rateCode )
-                          ( rate => rate.rateGroup )
-                          ( ( acc, x ) => x )
+  /* Group prices by rates collect the lowest price. */
+  val bests: Map[RateCode, CabinPrice] =
+    prices.groupMapReduce( cabinPrice => cabinPrice.rateCode )( x => x )(
+      ( best, cabinPrice ) => if cabinPrice.price < best.price
+                              then cabinPrice
+                              else best
+    )
 
-    /* Maps Rate Codes to "Best Cabin Prices" */
-    val bests: Map[String, CabinPrice] =
-      prices.groupMapReduce( cabinPrice => cabinPrice.rateCode )( x => x )(
-        ( best, cabinPrice ) => if cabinPrice.price < best.price
-                                then cabinPrice
-                                else best
-      )
-
-    /* Covert CabinPrices to BestCabinPrices by looking up Rate Groups. */
-    bests.values.map( cabinPrice =>
-      BestGroupPrice( cabinPrice.cabinCode,
-                      cabinPrice.rateCode,
-                      cabinPrice.price,
-                      rateGroups( cabinPrice.rateCode )
-                    )
-    ).toSeq
+  /* Covert `CabinPrice's to `BestCabinPrice's by looking up the human
+   * readable name for its `RateCode'. */
+  return bests.values.map( cabinPrice =>
+    BestGroupPrice( cabinPrice.cabinCode,
+                    cabinPrice.rateCode,
+                    cabinPrice.price,
+                    rateCodesToGroups( cabinPrice.rateCode )
+                  )
+  ).toSeq
+}
 
 
-/* Entry */
+/* -------------------------------------------------------------------------- */
 
+/** @brief Program entry. */
 @main def problem1(): Unit =
-  var rates = Seq(
-    Rate( "M1", "Military" ),
-    Rate( "M2", "Military" ),
-    Rate( "S1", "Senior" ),
-    Rate( "S2", "Senior" )
-  )
-  var prices = Seq(
-    CabinPrice( "CA", "M1", 200.00 ),
-    CabinPrice( "CA", "M2", 250.00 ),
-    CabinPrice( "CA", "S1", 225.00 ),
-    CabinPrice( "CA", "S2", 260.00 ),
-    CabinPrice( "CB", "M1", 230.00 ),
-    CabinPrice( "CB", "M2", 260.00 ),
-    CabinPrice( "CB", "S1", 245.00 ),
-    CabinPrice( "CB", "S2", 270.00 )
-  )
-  var bestGroupPrices = RateUtils.getBestGroupPrices( rates, prices )
-  bestGroupPrices.foreach( println )
+{
+  var rates = Seq( Rate( "M1", "Military" ),
+                   Rate( "M2", "Military" ),
+                   Rate( "S1", "Senior" ),
+                   Rate( "S2", "Senior" )
+                 )
+  var prices = Seq( CabinPrice( "CA", "M1", 200.00 ),
+                    CabinPrice( "CA", "M2", 250.00 ),
+                    CabinPrice( "CA", "S1", 225.00 ),
+                    CabinPrice( "CA", "S2", 260.00 ),
+                    CabinPrice( "CB", "M1", 230.00 ),
+                    CabinPrice( "CB", "M2", 260.00 ),
+                    CabinPrice( "CB", "S1", 245.00 ),
+                    CabinPrice( "CB", "S2", 270.00 )
+                  )
+
+  getBestGroupPrices( rates, prices ).foreach( println )
+}
+
+
+/* -------------------------------------------------------------------------- *
+ *
+ * Author: Alex Ameen <alex.amee.tx@gmail.com>
+ * Last Update: Sun Jun  2 05:58:07 PM CDT 2024
+ *
+ *
+ * ========================================================================== */
