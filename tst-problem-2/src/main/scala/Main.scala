@@ -105,6 +105,7 @@ def allCombinablePromotions( allPromotions: Seq[Promotion]
 {
   val combos = allCombinablePromotionsWithRedundancy( allPromotions );
   var keeps  = Seq[PromotionCombo]();
+  /* Filter out any combos which are a subset of a larger combo. */
   for ( a <- combos )
     {
       var keep = true;
@@ -130,9 +131,12 @@ def combinablePromotions( promotionCode: PromoCode
                         , allPromotions: Seq[Promotion]
                         ): Seq[PromotionCombo] =
 {
-  return allCombinablePromotions( allPromotions ).filter( promos =>
-    promos.promotionCodes.contains( promotionCode )
+  /* Filter out any that aren't immediately combinable with `promotionCode'. */
+  val valids = allPromotions.filter( promotion =>
+    ( promotionCode == promotion.code ) ||
+    isValidCombo( allPromotions, Seq( promotionCode, promotion.code ) )
   );
+  return allCombinablePromotions( valids );
 }
 
 
@@ -162,7 +166,7 @@ def combinablePromotions( promotionCode: PromoCode
 /* -------------------------------------------------------------------------- *
  *
  * Author: Alex Ameen <alex.ameen.tx@gmail.com>
- * Last Update: Sun Jun  4 04:47 PM CDT 2024
+ * Last Update: Sun Jun  4 06:03 PM CDT 2024
  *
  *
  * ========================================================================== */
