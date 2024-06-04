@@ -88,12 +88,12 @@ def getBestGroupPrices( rates:  Seq[Rate]
 /** @brief Program entry. */
 @main def problem1(): Unit =
 {
-  var rates = Seq( Rate( "M1", "Military" )
+  val rates = Seq( Rate( "M1", "Military" )
                  , Rate( "M2", "Military" )
                  , Rate( "S1", "Senior" )
                  , Rate( "S2", "Senior" )
                  );
-  var prices = Seq( CabinPrice( "CA", "M1", 200.00 )
+  val prices = Seq( CabinPrice( "CA", "M1", 200.00 )
                   , CabinPrice( "CA", "M2", 250.00 )
                   , CabinPrice( "CA", "S1", 225.00 )
                   , CabinPrice( "CA", "S2", 260.00 )
