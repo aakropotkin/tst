@@ -151,7 +151,6 @@ def combinablePromotions( promotionCode: PromoCode
   println( "allCombinablePromotions:" )
   allCombinablePromotions( promos ).foreach( println );
 
-
   println("\ncombinablePromotions with P1:")
   combinablePromotions( "P1", promos ).foreach( println );
 
