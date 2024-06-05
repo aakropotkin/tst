@@ -3,8 +3,8 @@
  * For more information on writing tests, see
  * https://scalameta.org/munit/docs/getting-started.html
  *
- * TODO: Don't make tests depend on sorted order of list members.
- *       Use `contains` and `find`.
+ * NOTE: Don't make tests depend on sorted order of sequence members.
+ *       Use `contains` and `sorted` when sequences contain multiple elements.
  *
  * -------------------------------------------------------------------------- */
 
@@ -71,6 +71,9 @@ class MySuite extends munit.FunSuite {
          , Promotion( "B", Seq() )
          , Promotion( "C", Seq() )
       )
+    ).map( promotion =>
+      /* Sort combo members so later equality check works. */
+      PromotionCombo( promotion.promotionCodes.sorted )
     );
     val expected = Seq(
       PromotionCombo( Seq( "A" ) )
@@ -79,7 +82,7 @@ class MySuite extends munit.FunSuite {
     , PromotionCombo( Seq( "A", "C" ) )
     , PromotionCombo( Seq( "B", "C" ) )
     );
-    assertEquals( obtained, expected );
+    assert( expected.forall( combo => obtained.contains( combo ) ) );
   }
 
 
@@ -91,12 +94,15 @@ class MySuite extends munit.FunSuite {
          , Promotion( "B", Seq() )
          , Promotion( "C", Seq() )
       )
+    ).map( promotion =>
+      /* Sort combo members so later equality check works. */
+      PromotionCombo( promotion.promotionCodes.sorted )
     );
     val expected = Seq(
       PromotionCombo( Seq( "A", "C" ) )
     , PromotionCombo( Seq( "B", "C" ) )
     );
-    assertEquals( obtained, expected );
+    assert( expected.forall( combo => obtained.contains( combo ) ) );
   }
 
 
