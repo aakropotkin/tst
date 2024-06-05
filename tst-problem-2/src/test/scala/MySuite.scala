@@ -27,8 +27,8 @@ class MySuite extends munit.FunSuite {
     val obtained = combinationsAnyLength( Seq( Promotion( "A", Seq() ),
                                                Promotion( "B", Seq() )
                                              )
-                                        );
-    val expected = Seq( Seq("A"), Seq( "B" ), Seq( "A", "B" ) );
+                                        ).map( lst => lst.sorted ).sorted;
+    val expected = Seq( Seq("A"), Seq( "B" ), Seq( "A", "B" ) ).sorted;
     assertEquals( obtained, expected)
   }
 
@@ -46,6 +46,7 @@ class MySuite extends munit.FunSuite {
 
   test( "isValidCombo detects trivial positives" ) {
     assert( isValidCombo( promos, Seq( "P1", "P2" ) ) );
+    assert( isValidCombo( promos, Seq( "P2", "P1" ) ) );
   }
 
 
@@ -60,6 +61,7 @@ class MySuite extends munit.FunSuite {
 
   test( "isValidCombo detects trivial negatives" ) {
     assert( ! isValidCombo( promos, Seq( "P1", "P3" ) ) );
+    assert( ! isValidCombo( promos, Seq( "P3", "P1" ) ) );
   }
 
 
