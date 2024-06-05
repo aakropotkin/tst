@@ -51,8 +51,8 @@ class MySuite extends munit.FunSuite {
     val exception = ( intercept[NoSuchElementException] {
       getBestGroupPrices( Seq( Rate( "M2", "Military" ) )
                         , Seq( CabinPrice( "CA", "M1", 2.0 )
-                        , CabinPrice( "CB", "M1", 1.0 )
-                        )
+                             , CabinPrice( "CB", "M1", 1.0 )
+                             )
                         );
     } ).getMessage;
     assertEquals( exception, "key not found: M1" );
