@@ -166,7 +166,6 @@ def combinablePromotions( promotionCode: PromoCode
 /* -------------------------------------------------------------------------- *
  *
  * Author: Alex Ameen <alex.ameen.tx@gmail.com>
- * Last Update: Sun Jun  4 06:03 PM CDT 2024
  *
  *
  * ========================================================================== */

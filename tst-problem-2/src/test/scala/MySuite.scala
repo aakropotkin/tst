@@ -121,7 +121,6 @@ class MySuite extends munit.FunSuite {
 /* -------------------------------------------------------------------------- *
  *
  * Author: Alex Ameen <alex.ameen.tx@gmail.com>
- * Last Update: Sun Jun  4 05:08 PM CDT 2024
  *
  *
  * ========================================================================== */
