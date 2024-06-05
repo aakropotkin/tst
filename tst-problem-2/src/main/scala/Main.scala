@@ -23,6 +23,15 @@ case class PromotionCombo( promotionCodes: Seq[PromoCode] );
 /* -------------------------------------------------------------------------- */
 
 /**
+ * @brief An exception indicating that a list representation of a dictionary
+ *        contains multiple conflicting keys.
+ */
+class DuplicateKeyException( key: String ) extends Exception( key ) {};
+
+
+/* -------------------------------------------------------------------------- */
+
+/**
  * @brief Emit a set of all combinations of codes ignoring whether they
  *        are truly combinable.
  *
@@ -56,7 +65,10 @@ def isValidCombo( allPromotions: Seq[Promotion]
     allPromotions
       .groupMapReduce( promotion         => promotion.code )
                      ( promotion         => promotion.notCombinableWith )
-                     ( ( acc, nonCombo ) => assert( false ) );
+                     ( ( acc, nonCombo ) => throw new DuplicateKeyException(
+                         "all promotions list contains duplicate keys"
+                       )
+                     );
   var keeps = combo.toSet;
   for ( promoCode <- combo ) { keeps = keeps -- byCode( promoCode ); }
   return keeps.toList == combo;
