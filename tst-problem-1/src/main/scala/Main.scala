@@ -51,6 +51,15 @@ case class BestGroupPrice( cabinCode: CabinCode
 
 /* -------------------------------------------------------------------------- */
 
+/**
+ * @brief An exception indicating that a list representation of a dictionary
+ *        contains multiple conflicting keys.
+ */
+class DuplicateKeyException( key: String ) extends Exception( key ) {};
+
+
+/* -------------------------------------------------------------------------- */
+
 /** @brief Find the best prices for a rate group in a set of cabin prices. */
 def getBestGroupPrices( rates:  Seq[Rate]
                       , prices: Seq[CabinPrice]
@@ -60,7 +69,9 @@ def getBestGroupPrices( rates:  Seq[Rate]
   val rateCodesToGroups: Map[RateCode, RateGroup] =
     rates.groupMapReduce( rate => rate.rateCode )( rate => rate.rateGroup )(
       /* Ensure each `RateCode' is defined exactly once. */
-      ( acc, x ) => assert( false )
+      ( acc, x ) => throw new DuplicateKeyException(
+        "rates list contains duplicate keys"
+      )
     );
 
   /* Group prices by rates collect the lowest price. */
@@ -110,7 +121,6 @@ def getBestGroupPrices( rates:  Seq[Rate]
 /* -------------------------------------------------------------------------- *
  *
  * Author: Alex Ameen <alex.ameen.tx@gmail.com>
- * Last Update: Sun Jun  2 06:12 PM CDT 2024
  *
  *
  * ========================================================================== */

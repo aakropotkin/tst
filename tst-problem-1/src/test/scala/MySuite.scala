@@ -47,7 +47,7 @@ class MySuite extends munit.FunSuite {
 
 /* -------------------------------------------------------------------------- */
 
-  test( "bestGroupPrices produces throws for undefined groups" ) {
+  test( "bestGroupPrices throws for undefined groups" ) {
     val exception = ( intercept[NoSuchElementException] {
       getBestGroupPrices( Seq( Rate( "M2", "Military" ) )
                         , Seq( CabinPrice( "CA", "M1", 2.0 )
@@ -61,13 +61,26 @@ class MySuite extends munit.FunSuite {
 
 /* -------------------------------------------------------------------------- */
 
+  test( "bestGroupPrices throws for duplicate keys" ) {
+    val exception = ( intercept[DuplicateKeyException] {
+      getBestGroupPrices( Seq( Rate( "M1", "Military" )
+                             , Rate( "M1", "Military" )
+                             )
+                        , Seq( CabinPrice( "CA", "M1", 1.0 ) )
+                        );
+    } ).getMessage;
+    assertEquals( exception, "rates list contains duplicate keys" );
+  }
+
+
+/* -------------------------------------------------------------------------- */
+
 }  // End `class MySuite ...'
 
 
 /* -------------------------------------------------------------------------- *
  *
  * Author: Alex Ameen <alex.ameen.tx@gmail.com>
- * Last Update: Sun Jun  4 06:17 PM CDT 2024
  *
  *
  * ========================================================================== */
